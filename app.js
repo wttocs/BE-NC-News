@@ -18,12 +18,16 @@ const {
   patchArticleById,
 } = require("./controllers/article_controllers.js");
 
+const { getAllUsers } = require("./controllers/user_controller");
+
 // Trello 3
 app.get("/api/topics", getAllTopics);
 // Trello 4
 app.get("/api/articles/:article_id", getArticleByID);
 // Trello 5
 app.patch("/api/articles/:article_id", patchArticleById);
+// Trello 6
+app.get("/api/users", getAllUsers);
 
 // Error Handling
 app.all("*", (req, res, next) => {

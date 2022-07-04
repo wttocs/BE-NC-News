@@ -34,7 +34,7 @@ describe("GET /api/topics", () => {
 describe("GET /api/topics - Error Handling", () => {
   test("404: Responds with a correct error message for an invalid get request path", () => {
     return request(app)
-      .get("/api/notatop")
+      .get("/api/notatopic")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toEqual("Not Found");
@@ -62,7 +62,7 @@ describe("GET /api/articles/:articleid", () => {
       });
   });
 });
-// Trello 4 Question tests - Sad paths
+// Trello 4 Question tests - Sad path
 describe("GET /api/articles/:articleid - Error Handling", () => {
   test("400: Responds with 'Bad request' error message for an invalid get request path", () => {
     return request(app)
@@ -121,6 +121,36 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toEqual("Bad Request");
+      });
+  });
+});
+// Trello 6 Question tests - Happy paths
+describe("GET /api/users", () => {
+  test("200: Responds with an array of users objects with each having the username, name and avatar_url properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+// Trello 6 Question tests - Sad path
+describe("GET /api/topics - Error Handling", () => {
+  test("404: Responds with a correct error message for an invalid get request path", () => {
+    return request(app)
+      .get("/api/userpath")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Not Found");
       });
   });
 });
