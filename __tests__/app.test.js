@@ -13,10 +13,12 @@ afterAll(() => {
   db.end();
 });
 
+// Test to check tests are running
 describe("App tests are running", () => {
   test("app.tests is running...", () => {});
 });
 
+// Trello 3 Question tests
 describe("GET /api/topics", () => {
   test("200: Responds with an array of topic objects with each having the slug and description properties", () => {
     return request(app)
