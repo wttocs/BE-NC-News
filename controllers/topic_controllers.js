@@ -1,7 +1,4 @@
-const {
-  fetchAllTopics,
-  fetchArticleById,
-} = require("../models/topic_models.js");
+const { fetchAllTopics } = require("../models/topic_models.js");
 
 // Trello 3
 exports.getAllTopics = (req, res, next) => {
