@@ -8,9 +8,3 @@ exports.fetchAllTopics = () => {
     return topics;
   });
 };
-
-// Trello 4
-exports.fetchArticleById = (params) => {
-  const { article_id } = params;
-  const queryString = "";
-};

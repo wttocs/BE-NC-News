@@ -11,15 +11,14 @@ const {
 } = require("./controllers/error_controllers.js");
 
 // Controllers
-const {
-  getAllTopics,
-  getArticleByID,
-} = require("./controllers/topic_controllers.js");
+const { getAllTopics } = require("./controllers/topic_controllers.js");
+
+const { getArticleByID } = require("./controllers/article_controllers.js");
 
 // Trello 3
 app.get("/api/topics", getAllTopics);
 // Trello 4
-app.get("api/articles/:article_id", getArticleByID);
+app.get("/api/articles/:article_id", getArticleByID);
 
 // Error Handling
 app.all("*", (req, res, next) => {

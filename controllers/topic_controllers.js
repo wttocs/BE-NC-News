@@ -10,16 +10,3 @@ exports.getAllTopics = (req, res, next) => {
       next(err);
     });
 };
-
-// Trello 3
-
-exports.getArticleByID = (req, res, next) => {
-  const params = req.params;
-  fetchArticleById(params)
-    .then((article) => {
-      res.status(200).send({ article });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
