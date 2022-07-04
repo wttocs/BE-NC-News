@@ -73,14 +73,6 @@ The output of your PSQL query will be within the file
 dev-db.txt
 ```
 
-## Further Instructions
-
-Please create enviroment variables to be able to clone and locally run this file succesfully.
-Please create the below files and check they are in the gitignore file:
-
-.env.test - In the body of this file please add PGDATABASE=nc_news_test
-.env.development - In the body of this file please add PGDATABASE=nc_news
-
 ## Dependencies
 
 Below are the list of dependencies:
