@@ -77,7 +77,11 @@ dev-db.txt
 
 Below are the list of dependencies:
 
+```
 postgres
+
+```
+
 husky
 express
 jest
