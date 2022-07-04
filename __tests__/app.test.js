@@ -72,12 +72,55 @@ describe("GET /api/articles/:articleid - Error Handling", () => {
         expect(msg).toEqual("Bad Request");
       });
   });
-  test("404: Responds with 'ID Not Found' error message for an invalid id that does not exist", () => {
+  test("404: Responds with 'Article ID Not Found' error message for an invalid id that does not exist", () => {
     return request(app)
       .get("/api/articles/1000")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toEqual("Article ID Not Found");
+      });
+  });
+});
+// Trello 5 Question tests - Happy paths
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with an articles object with the votes updated correctly", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 100 })
+      .expect(200)
+      .then(({ body: { updated_article } }) => {
+        expect(updated_article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 200,
+          })
+        );
+      });
+  });
+});
+// Trello 5 Question tests - Sad paths
+describe("PATCH /api/articles/:article_id - Error Handling", () => {
+  test("404: Responds with 'Article ID Not Found' error message for an invalid id that does not exist", () => {
+    return request(app)
+      .patch("/api/articles/500")
+      .send({ inc_votes: 100 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Article ID Not Found");
+      });
+  });
+  test("400: Responds with 'Bad request' error message for an invalid patch request path", () => {
+    return request(app)
+      .patch("/api/articles/badpath")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Bad Request");
       });
   });
 });

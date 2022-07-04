@@ -11,3 +11,22 @@ exports.fetchArticleById = (params) => {
     } else return article[0];
   });
 };
+// Trello 5
+exports.updateArticleById = (body, params) => {
+  const { inc_votes } = body;
+  const { article_id } = params;
+  const queryString =
+    "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *";
+  return db
+    .query(queryString, [inc_votes, article_id])
+    .then(({ rows: updated_article }) => {
+      if (!updated_article.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "Article ID Not Found",
+        });
+      } else {
+        return updated_article[0];
+      }
+    });
+};
