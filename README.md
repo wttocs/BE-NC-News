@@ -79,9 +79,6 @@ Below are the list of dependencies:
 
 ```
 postgres
-
-```
-
 husky
 express
 jest
@@ -90,11 +87,4 @@ jest-sorted
 pg-format
 supertest
 dotenv
-
-```
-
-```
-
-```
-
 ```
