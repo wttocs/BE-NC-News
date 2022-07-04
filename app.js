@@ -9,6 +9,8 @@ const {
   handleCustomErrors,
   handleInternalServerErrors,
 } = require("./controllers/error_controllers.js");
+
+// Controllers
 const { getAllTopics } = require("./controllers/topic_controllers.js");
 
 // Trello 3

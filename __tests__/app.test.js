@@ -36,7 +36,7 @@ describe("GET /api/topics", () => {
       });
   });
 });
-// Trello 3 Question tests - Happy paths
+// Trello 3 Question tests - Sad paths
 describe("GET Error Handling", () => {
   test("404: Responds with a correct error message for an invalid get request path", () => {
     return request(app)
