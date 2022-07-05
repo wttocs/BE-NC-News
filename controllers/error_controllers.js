@@ -1,3 +1,9 @@
+const app = require("../app");
+// Invalid Paths
+exports.handleInvalidPaths = (req, res) => {
+  res.status(404).send({ msg: "Not Found" });
+};
+
 //  PSQL errors
 exports.handlePSQLErrors = (err, req, res, next) => {
   if (err.code === "22P02") {
@@ -6,7 +12,7 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     next(err);
   }
 };
-//Custom errors
+// Custom errors
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
@@ -14,7 +20,6 @@ exports.handleCustomErrors = (err, req, res, next) => {
     next(err);
   }
 };
-
 //handle unexpected error
 exports.handleInternalServerErrors = (err, req, res, next) => {
   console.log(err);
