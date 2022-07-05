@@ -129,6 +129,10 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .send({ not_inc_votes: 200 })
       .expect(400)
       .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request");
+      });
+  });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
         expect(msg).toBe("Invalid Request: Please enter the correct input");
       });
   });
@@ -138,6 +142,46 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .send({ inc_votes: "dog" })
       .expect(400)
       .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request");
+      });
+  });
+  //   test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+  //     return request(app)
+  //       .patch("/api/articles/1")
+  //       .send({ inc_votes: "100", down_votes: "200" })
+  //       .expect(400)
+  //       .then(({ body: { msg } }) => {
+  //         expect(msg).toBe("Invalid Request");
+  //       });
+  //   });
+});
+// Trello 6 Question tests - Happy paths
+describe("GET /api/users", () => {
+  test("200: Responds with an array of users objects with each having the username, name and avatar_url properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+// Trello 6 Question tests - Sad path
+describe("GET /api/topics - Error Handling", () => {
+  test("404: Responds with a error message of 'Not Found' for an invalid get request path", () => {
+    return request(app)
+      .get("/api/userpath")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Not Found");
         expect(msg).toBe("Invalid Request: Please enter a number");
       });
   });

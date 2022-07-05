@@ -21,6 +21,13 @@ exports.fetchArticleById = (params) => {
 exports.updateArticleById = (body, params) => {
   const { inc_votes } = body;
   const { article_id } = params;
+  if (!inc_votes || isNaN(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request",
+    });
+  }
+
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
