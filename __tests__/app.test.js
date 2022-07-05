@@ -14,7 +14,7 @@ afterAll(() => {
 
 // Trello 3 Question tests - Happy paths
 describe("GET /api/topics", () => {
-  test("200: Responds with an array of topic objects with each having the slug and description properties", () => {
+  test("200: Responds with an array of topic objects with each containing the slug and description properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -148,6 +148,28 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Request: Please only enter one input");
+      });
+  });
+});
+// Trello 7
+describe("GET /api/articles/:articleid (comment_count)", () => {
+  test("200: Responds with an objects array containing author(which is username from the users table),title, article_id, body, topic, created_at, votes and comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            comment_count: 11,
+          })
+        );
       });
   });
 });
