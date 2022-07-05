@@ -142,6 +142,28 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
         expect(msg).toBe("Invalid Request: Please enter a number");
       });
   });
+  // Trello 7
+  describe("GET /api/articles/:articleid (comment_count)", () => {
+    test("200: Responds with an objects array containing author(which is username from the users table),title, article_id, body, topic, created_at, votes and comment count", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+              comment_count: 11,
+            })
+          );
+        });
+    });
+  });
   test("400, Responds with 'Invalid Request' error message when passed an object that does have a 'inc_votes' property but also includes an additional incorrect property", () => {
     return request(app)
       .patch("/api/articles/1")
