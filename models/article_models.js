@@ -15,10 +15,22 @@ exports.fetchArticleById = (params) => {
 exports.updateArticleById = (body, params) => {
   const { inc_votes } = body;
   const { article_id } = params;
-  if (!inc_votes || isNaN(inc_votes)) {
+  if (!inc_votes) {
     return Promise.reject({
       status: 400,
-      msg: "Invalid Request",
+      msg: "Invalid Request: Please enter the correct input",
+    });
+  }
+  if (isNaN(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request: Please enter a number",
+    });
+  }
+  if (Object.keys(body).length > 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request: Please only enter one input",
     });
   }
 

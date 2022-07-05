@@ -129,7 +129,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .send({ not_inc_votes: 200 })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Invalid Request");
+        expect(msg).toBe("Invalid Request: Please enter the correct input");
       });
   });
   test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
@@ -138,16 +138,16 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .send({ inc_votes: "dog" })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Invalid Request");
+        expect(msg).toBe("Invalid Request: Please enter a number");
       });
   });
-  //   test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
-  //     return request(app)
-  //       .patch("/api/articles/1")
-  //       .send({ inc_votes: "100", down_votes: "200" })
-  //       .expect(400)
-  //       .then(({ body: { msg } }) => {
-  //         expect(msg).toBe("Invalid Request");
-  //       });
-  //   });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "100", down_votes: "200" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request: Please only enter one input");
+      });
+  });
 });

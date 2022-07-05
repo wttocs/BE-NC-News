@@ -5,6 +5,7 @@ app.use(express.json());
 
 // Error Handling
 const {
+  handleInvalidPaths,
   handlePSQLErrors,
   handleCustomErrors,
   handleInternalServerErrors,
@@ -26,9 +27,8 @@ app.get("/api/articles/:article_id", getArticleByID);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 // Error Handling
-app.all("*", (req, res, next) => {
-  res.status(404).send({ msg: "Not Found" });
-});
+app.use("*", handleInvalidPaths);
+
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);
 app.use(handleInternalServerErrors);
