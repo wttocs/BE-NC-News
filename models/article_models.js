@@ -33,7 +33,6 @@ exports.updateArticleById = (body, params) => {
       msg: "Invalid Request: Please only enter one input",
     });
   }
-
   const queryString =
     "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *";
   return db
