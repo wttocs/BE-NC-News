@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -132,7 +133,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
         expect(msg).toBe("Invalid Request: Please enter the correct input");
       });
   });
-  test("400, Responds with 'Invalid Request' error message when passed an object that does  have a 'inc_votes' property with the incorrect value", () => {
+  test("400, Responds with 'Invalid Request' error message when passed an object that does  have a 'inc_votes' property with the incorrect value - PostgreSQL Error Handler", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "dog" })
@@ -148,6 +149,71 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Request: Please only enter one input");
+      });
+  });
+});
+// Trello 8 Question tests - Happy paths
+describe("GET /api/articles/", () => {
+  test("200: Responds with an articles object sorted by the creation date in descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSorted("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("200: Responds with an articles object sorted by the creation date in descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=desc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSorted("title", { descending: true });
+      });
+  });
+  test("200: Responds with an articles object sorted by votes in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        expect(articles).toBeSorted("votes", { ascending: true });
+      });
+  });
+});
+// Trello 8 Question tests - Sad paths
+describe("GET /api/articles/ - Error Handling", () => {
+  test("400: Responds with Invalid Request: Please enter a valid sort by or order error message for an invalid sort by query - PostgreSQL Error Handler", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notaquery")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual(
+          "Invalid Request: Please enter a valid sort_by query"
+        );
+      });
+  });
+  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query - PostgreSQL Error Handler", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=notanorder")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual(
+          "Invalid Request: Please enter a valid order query"
+        );
       });
   });
 });

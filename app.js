@@ -17,6 +17,7 @@ const { getAllTopics } = require("./controllers/topic_controllers.js");
 const {
   getArticleByID,
   patchArticleById,
+  getAllArticles,
 } = require("./controllers/article_controllers.js");
 
 // Trello 3
@@ -25,6 +26,10 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles/:article_id", getArticleByID);
 // Trello 5
 app.patch("/api/articles/:article_id", patchArticleById);
+//
+//
+// Trello 8
+app.get("/api/articles", getAllArticles);
 
 // Error Handling
 app.use("*", handleInvalidPaths);

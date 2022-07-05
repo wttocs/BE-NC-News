@@ -48,3 +48,49 @@ exports.updateArticleById = (body, params) => {
       }
     });
 };
+
+// Trello 8
+exports.fetchAllArticles = (sort_by = "created_at", order = "desc") => {
+  const validSortBy = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const validOrder = ["desc", "asc"];
+
+  let queryString = `
+  SELECT 
+    articles.article_id,
+    articles.title,
+    articles.topic,
+    articles.author,
+    articles.created_at,
+    articles.votes,
+  COUNT(comment_id)::int AS comment_count
+  FROM articles
+  LEFT JOIN comments
+  USING (article_id) GROUP BY articles.article_id`;
+
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request: Please enter a valid sort_by query",
+    });
+  }
+  if (!validOrder.includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request: Please enter a valid order query",
+    });
+  } else {
+    queryString += ` ORDER BY ${sort_by} ${order.toUpperCase()}`;
+  }
+  return db.query(queryString).then(({ rows: articles }) => {
+    return articles;
+  });
+};
