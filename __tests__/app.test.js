@@ -32,9 +32,9 @@ describe("GET /api/topics", () => {
 });
 // Trello 3 Question tests - Sad paths
 describe("GET /api/topics - Error Handling", () => {
-  test("404: Responds with a correct error message for an invalid get request path", () => {
+  test("404: Responds with a error message of 'Not Found' for an invalid get request path", () => {
     return request(app)
-      .get("/api/notatop")
+      .get("/api/notatopic")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toEqual("Not Found");
@@ -62,7 +62,7 @@ describe("GET /api/articles/:articleid", () => {
       });
   });
 });
-// Trello 4 Question tests - Sad paths
+// Trello 4 Question tests - Sad path
 describe("GET /api/articles/:articleid - Error Handling", () => {
   test("400: Responds with 'Bad request' error message for an invalid get request path", () => {
     return request(app)
@@ -123,4 +123,31 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
         expect(msg).toEqual("Bad Request");
       });
   });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ not_inc_votes: 200 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request");
+      });
+  });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "dog" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request");
+      });
+  });
+  //   test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+  //     return request(app)
+  //       .patch("/api/articles/1")
+  //       .send({ inc_votes: "100", down_votes: "200" })
+  //       .expect(400)
+  //       .then(({ body: { msg } }) => {
+  //         expect(msg).toBe("Invalid Request");
+  //       });
+  //   });
 });
