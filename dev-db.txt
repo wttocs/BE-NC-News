@@ -1,9 +1,1 @@
 You are now connected to database "nc_news_test" as user "scottwoodcock".
-   username    
----------------
- icellusedkars
- lurker
- rogersop
- butter_bridge
-(4 rows)
-

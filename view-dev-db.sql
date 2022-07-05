@@ -6,4 +6,4 @@
 -- SELECT * FROM users;
 
 
-SELECT username FROM users;
+SELECT * FROM users;
