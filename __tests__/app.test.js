@@ -132,7 +132,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
         expect(msg).toBe("Invalid Request: Please enter the correct input");
       });
   });
-  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+  test("400, Responds with 'Invalid Request' error message when passed an object that does  have a 'inc_votes' property with the incorrect value", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "dog" })
@@ -141,7 +141,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
         expect(msg).toBe("Invalid Request: Please enter a number");
       });
   });
-  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+  test("400, Responds with 'Invalid Request' error message when passed an object that does have a 'inc_votes' property but also includes an additional incorrect property", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "100", down_votes: "200" })
