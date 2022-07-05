@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 // Trello 3 Question tests - Happy paths
-describe("GET /api/topics", () => {
+describe.only("GET /api/topics", () => {
   test("200: Responds with an array of topic objects with each having the slug and description properties", () => {
     return request(app)
       .get("/api/topics")
@@ -217,3 +217,4 @@ describe("GET /api/articles/ - Error Handling", () => {
       });
   });
 });
+

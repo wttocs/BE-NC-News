@@ -4,17 +4,30 @@ const format = require("pg-format");
 // Trello 4
 exports.fetchArticleById = (params) => {
   const { article_id } = params;
-  const queryString = "SELECT * FROM articles WHERE article_id = $1;";
+  const queryValues = [];
+  let queryString = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
+    FROM articles 
+    LEFT JOIN comments USING (article_id) WHERE articles.article_id = $1 GROUP BY articles.article_id`;
+
   return db.query(queryString, [article_id]).then(({ rows: article }) => {
-    if (article[0] === undefined) {
+    if (!article[0]) {
       return Promise.reject({ status: 404, msg: "Article ID Not Found" });
-    } else return article[0];
+    } else {
+      return article[0];
+    }
   });
 };
 // Trello 5
 exports.updateArticleById = (body, params) => {
   const { inc_votes } = body;
   const { article_id } = params;
+  if (!inc_votes || isNaN(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Request",
+    });
+  }
+
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
