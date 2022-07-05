@@ -5,5 +5,8 @@
 -- SELECT * FROM topics;
 -- SELECT * FROM users;
 
+SELECT created_at from articles;
+=======
 
 SELECT * FROM users;
+
