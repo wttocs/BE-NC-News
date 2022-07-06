@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 const { fetchAllUsers } = require("./user_models");
+=======
 
 // Trello 9
 exports.fetchCommentsByArticleId = (article_id) => {
@@ -82,3 +83,4 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     }
   });
 };
+

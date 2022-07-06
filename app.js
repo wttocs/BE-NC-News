@@ -25,6 +25,11 @@ const { getAllUsers } = require("./controllers/user_controller.js");
 const {
   postCommentByArticleId,
 } = require("./controllers/comment_controllers.js");
+const {
+  getCommentsByArticleId,
+} = require("./controllers/comment_controllers.js");
+
+const { getAllUsers } = require("./controllers/user_controller");
 
 // Trello 3
 app.get("/api/topics", getAllTopics);
@@ -36,9 +41,11 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getAllUsers);
 // Trello 8
 app.get("/api/articles", getAllArticles);
-
+// Trello 9
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 // Trello 10
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
 
 // Error Handling
 app.use("*", handleInvalidPaths);

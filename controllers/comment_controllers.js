@@ -6,7 +6,12 @@ const {
 } = require("../models/comment_models.js");
 
 // Trello 9
+// exports.getCommentsByArticleId = (req, res, next) => {
+// const { fetchCommentsByArticleId } = require("../models/comment_models.js");
+
+// Trello 9
 exports.getCommentsByArticleId = (req, res, next) => {
+  // const params = req.params;
   const { article_id } = req.params;
 
   const promises = [
@@ -36,3 +41,4 @@ exports.postCommentByArticleId = (req, res, next) => {
       next(err);
     });
 };
+

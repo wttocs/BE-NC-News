@@ -2,8 +2,8 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 // Trello 4
-exports.fetchArticleById = (params) => {
-  const { article_id } = params;
+
+exports.fetchArticleById = (article_id) => {
   let queryString = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
     FROM articles 
     LEFT JOIN comments USING (article_id) WHERE articles.article_id = $1 GROUP BY articles.article_id`;
