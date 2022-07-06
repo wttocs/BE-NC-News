@@ -205,7 +205,7 @@ describe("GET /api/articles/:articleid (comment_count)", () => {
   });
 });
 // Trello 8 Question tests - Happy paths
-describe.only("GET /api/articles/", () => {
+describe("GET /api/articles/", () => {
   test("200: Responds with an articles object sorted by the creation date in descending order by default", () => {
     return request(app)
       .get("/api/articles")
