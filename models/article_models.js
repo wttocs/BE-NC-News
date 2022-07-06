@@ -2,11 +2,11 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 // Trello 4
+
 exports.fetchArticleById = (article_id) => {
   let queryString = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
     FROM articles 
     LEFT JOIN comments USING (article_id) WHERE articles.article_id = $1 GROUP BY articles.article_id`;
-
   return db.query(queryString, [article_id]).then(({ rows: article }) => {
     if (!article[0]) {
       return Promise.reject({ status: 404, msg: "Article ID Not Found" });

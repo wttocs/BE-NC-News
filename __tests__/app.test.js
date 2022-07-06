@@ -320,3 +320,96 @@ describe("GET /api/articles/:articleid/comments - Error Handling", () => {
       });
   });
 });
+
+
+
+
+
+// Trello 10 Question tests - happy paths
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Creates a new comment and responds with the inserted comment", () => {
+    const comment = { username: "butter_bridge", body: "a_test_comment" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .then(({ body: { postedComment } }) => {
+        expect(postedComment).toEqual(
+          expect.objectContaining({
+            comment_id: 19,
+            article_id: 1,
+            author: "butter_bridge",
+            body: "a_test_comment",
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
+      });
+  });
+});
+// // Trello 10 Question tests - Sad paths
+describe("POST /api/articles/:article_id/comments - Error Handling", () => {
+  test("400: Responds with 'Bad Request' error message when path is invalid", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "a_test_comment",
+    };
+    return request(app)
+      .post("/api/articles/notanid/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("400: Responds with 'Bad Request: Please enter a username' error message when the comment contains no body", () => {
+    const newComment = {
+      username: "",
+      body: "this_is_a_comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Please enter a username");
+      });
+  });
+  test("400: Responds with 'Bad Request: Please enter a valid comment' error message when the comment contains no body", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Please enter a valid comment");
+      });
+  });
+  test("400: Responds with 'Bad request: Please enter a valid data type' error message when the comment body contains an incorrect date type", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: 2,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Please enter a valid data type");
+      });
+  });
+  test("401 - should return an error message if the username does not exist in the users database", () => {
+    const newComment = {
+      username: "not_a_username",
+      body: "a_test_comment",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Username does not exist");
+
+

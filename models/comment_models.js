@@ -1,5 +1,7 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { fetchAllUsers } = require("./user_models");
+=======
 
 // Trello 9
 exports.fetchCommentsByArticleId = (article_id) => {
@@ -19,3 +21,66 @@ exports.fetchCommentsByArticleId = (article_id) => {
     return articles;
   });
 };
+
+// Trello 10
+exports.insertCommentByArticleId = (article_id, username, body) => {
+  if (!body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a valid comment",
+    });
+  }
+
+  if (!username) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a username",
+    });
+  }
+  if (!body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a valid comment",
+    });
+  }
+  if (!username) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a username",
+    });
+  }
+  if (typeof body !== "string" || typeof username !== "string") {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a valid data type",
+    });
+  }
+  const queryString = `
+    INSERT INTO comments
+      (article_id, author, body)
+    VALUES
+      ($1, $2, $3)
+    RETURNING *;
+    `;
+
+  const queryValues = [article_id, username, body];
+
+  return fetchAllUsers().then((users) => {
+    const allUsernames = users.map((user) => {
+      return user.username;
+    });
+    if (!allUsernames.includes(username)) {
+      return Promise.reject({
+        status: 400,
+        msg: "Bad Request: Username does not exist",
+      });
+    } else {
+      return db
+        .query(queryString, queryValues)
+        .then(({ rows: postedComment }) => {
+          return postedComment[0];
+        });
+    }
+  });
+};
+
