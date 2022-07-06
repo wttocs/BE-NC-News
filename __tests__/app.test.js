@@ -227,7 +227,7 @@ describe("GET /api/articles/", () => {
         });
       });
   });
-  test("200: Responds with an articles object sorted by the creation date in descending order", () => {
+  test("200: Responds with an articles object sorted by the title in descending order", () => {
     return request(app)
       .get("/api/articles?sort_by=title&order=desc")
       .expect(200)
@@ -396,7 +396,7 @@ describe("POST /api/articles/:article_id/comments - Error Handling", () => {
         expect(msg).toBe("Bad Request: Please enter a valid data type");
       });
   });
-  test("401 - should return an error message if the username does not exist in the users database", () => {
+  test("400: Responds with 'Bad Request: Username does not exist' when body comment username does not exist", () => {
     const newComment = {
       username: "not_a_username",
       body: "a_test_comment",
@@ -408,5 +408,79 @@ describe("POST /api/articles/:article_id/comments - Error Handling", () => {
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request: Username does not exist");
       });
+  });
+});
+// Trello 11 Question tests - happy path
+describe("GET /GET /api/articles (queries)", () => {
+  test("200: Responds with an articles object sorted by title in descending order", () => {
+    return request(app)
+      .get("/api/articles?=title&order=desc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSorted("title", { descending: true });
+      });
+  });
+  test("200: Responds with an articles object sorted by votes in descending order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toBeSorted("votes", { descending: true });
+      });
+  });
+  test("200: Responds with an articles object filtered by cats topic when cats topic is value specified in the query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            topic: "cats",
+            votes: expect.any(Number),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("Responds with an articles object sorted by the title in descending order filtered by the topic of mitch", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=title&order=desc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("topic");
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(11);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            topic: "mitch",
+            votes: expect.any(Number),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  // // Trello 11 Question tests - Sad paths
+  describe("GET /api/articles (queries) - Error Handling", () => {
+    test("400: Responds with 'Bad Request: This topic does not exist' error message when queried topic does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=notatopic")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: This topic does not exist");
+        });
+    });
   });
 });
