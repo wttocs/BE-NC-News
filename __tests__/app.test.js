@@ -211,7 +211,7 @@ describe("GET /api/articles/", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toBeSorted("created_at", { descending: true });
+        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -227,188 +227,281 @@ describe("GET /api/articles/", () => {
         });
       });
   });
-  test("200: Responds with an articles object sorted by the creation date in descending order", () => {
-    return request(app)
-      .get("/api/articles?sort_by=title&order=desc")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toBeSorted("title", { descending: true });
-      });
+  // Trello 8 Question tests - Sad paths
+  describe("GET /api/articles/ - Error Handling", () => {
+    test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=notaquery")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual(
+            "Invalid Request: Please enter a valid sort_by query"
+          );
+        });
+    });
+    test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=notanorder")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual(
+            "Invalid Request: Please enter a valid order query"
+          );
+        });
+    });
   });
-  test("200: Responds with an articles object sorted by votes in ascending order", () => {
-    return request(app)
-      .get("/api/articles?sort_by=votes&order=asc")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toBeInstanceOf(Array);
-        expect(articles).toHaveLength(12);
-        expect(articles).toBeSorted("votes", { ascending: true });
-      });
+  // Trello 9 - Happy Path
+  describe("GET /api/articles/:articleid/comments", () => {
+    test("200: Responds with an array of comment objects for the input article id each having the comment_id, votes, created_at, author, body, article_id properties", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(Array.isArray(comments));
+          expect(comments).toHaveLength(11);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: Responds with an empty array when an article id exists but has no comments", () => {
+      return request(app)
+        .get("/api/articles/4/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments).toEqual([]);
+        });
+    });
   });
-});
-// Trello 8 Question tests - Sad paths
-describe("GET /api/articles/ - Error Handling", () => {
-  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
-    return request(app)
-      .get("/api/articles?sort_by=notaquery")
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toEqual(
-          "Invalid Request: Please enter a valid sort_by query"
-        );
-      });
+  // Trello 9 - Sad Paths
+  describe("GET /api/articles/:articleid/comments - Error Handling", () => {
+    test("404, responds with 'Not Found' error message when path is invalid", () => {
+      return request(app)
+        .get("/api/articles/2/notcomments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Path Not Found");
+        });
+    });
+    test("404: Responds with 'Article ID Not Found' error message when article id does not exist", () => {
+      return request(app)
+        .get("/api/articles/1000/comments")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article ID Not Found");
+        });
+    });
   });
-  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query", () => {
-    return request(app)
-      .get("/api/articles?sort_by=votes&order=notanorder")
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toEqual(
-          "Invalid Request: Please enter a valid order query"
-        );
-      });
-  });
-});
-// Trello 9 - Happy Path
-describe("GET /api/articles/:articleid/comments", () => {
-  test("200: Responds with an array of comment objects for the input article id each having the comment_id, votes, created_at, author, body, article_id properties", () => {
-    return request(app)
-      .get("/api/articles/1/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(Array.isArray(comments));
-        expect(comments).toHaveLength(11);
-        comments.forEach((comment) => {
-          expect(comment).toEqual(
+
+  // Trello 10 Question tests - happy paths
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("201: Creates a new comment and responds with the inserted comment", () => {
+      const comment = { username: "butter_bridge", body: "a_test_comment" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(comment)
+        .then(({ body: { postedComment } }) => {
+          expect(postedComment).toEqual(
             expect.objectContaining({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
+              comment_id: 19,
+              article_id: 1,
+              author: "butter_bridge",
+              body: "a_test_comment",
               created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
+              votes: 0,
             })
           );
         });
-      });
+    });
   });
-  test("200: Responds with an empty array when an article id exists but has no comments", () => {
-    return request(app)
-      .get("/api/articles/4/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments).toBeInstanceOf(Array);
-        expect(comments).toEqual([]);
-      });
+  // // Trello 10 Question tests - Sad paths
+  describe("POST /api/articles/:article_id/comments - Error Handling", () => {
+    test("400: Responds with 'Bad Request' error message when path is invalid", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "a_test_comment",
+      };
+      return request(app)
+        .post("/api/articles/notanid/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request");
+        });
+    });
+    test("400: Responds with 'Bad Request: Please enter a username' error message when the comment contains no body", () => {
+      const newComment = {
+        username: "",
+        body: "this_is_a_comment",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: Please enter a username");
+        });
+    });
+    test("400: Responds with 'Bad Request: Please enter a valid comment' error message when the comment contains no body", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: Please enter a valid comment");
+        });
+    });
+    test("400: Responds with 'Bad request: Please enter a valid data type' error message when the comment body contains an incorrect date type", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: 2,
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: Please enter a valid data type");
+        });
+    });
+    test("400: Responds with 'Bad Request: Username does not exist' when body comment username does not exist", () => {
+      const newComment = {
+        username: "not_a_username",
+        body: "a_test_comment",
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: Username does not exist");
+        });
+    });
+  });
+  // Trello 11 Question tests - happy path
+  describe("GET /GET /api/articles (queries)", () => {
+    test("200: Responds with an articles object sorted by title in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order=desc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("200: Responds with an articles object sorted by author in ascending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toBeSortedBy("author", { ascending: true });
+        });
+    });
+    test("200: Responds with an articles object filter by the topic of cats", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(1);
+          articles.forEach((article) => {
+            expect(article.topic).toBe("cats");
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              topic: "cats",
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("Responds with an articles object filtered by the topic of mitch", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(11);
+          articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              topic: "mitch",
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("200: Responds with an articles object sorted by the article id in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=desc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("article_id", {
+            descending: true,
+          });
+        });
+    });
+    test("200: Responds with an articles object sorted by comment count in ascending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count&order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(12);
+          expect(articles).toBeSortedBy("comment_count", { ascending: true });
+        });
+    });
+  });
+  // // Trello 11 Question tests - Sad paths
+  describe("GET /api/articles (queries) - Error Handling", () => {
+    test("400: Responds with 'Bad Request: This topic does not exist' error message when queried topic does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=notatopic")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: This topic does not exist");
+        });
+    });
   });
 });
-// Trello 9 - Sad Paths
-describe("GET /api/articles/:articleid/comments - Error Handling", () => {
-  test("404, responds with 'Not Found' error message when path is invalid", () => {
-    return request(app)
-      .get("/api/articles/2/notcomments")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Path Not Found");
-      });
-  });
-  test("404: Responds with 'Article ID Not Found' error message when article id does not exist", () => {
-    return request(app)
-      .get("/api/articles/1000/comments")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article ID Not Found");
-      });
-  });
+test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
+  return request(app)
+    .get("/api/articles?sort_by=notaquery")
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toEqual(
+        "Invalid Request: Please enter a valid sort_by query"
+      );
+    });
 });
-
-// Trello 10 Question tests - happy paths
-describe("POST /api/articles/:article_id/comments", () => {
-  test("201: Creates a new comment and responds with the inserted comment", () => {
-    const comment = { username: "butter_bridge", body: "a_test_comment" };
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(comment)
-      .then(({ body: { postedComment } }) => {
-        expect(postedComment).toEqual(
-          expect.objectContaining({
-            comment_id: 19,
-            article_id: 1,
-            author: "butter_bridge",
-            body: "a_test_comment",
-            created_at: expect.any(String),
-            votes: 0,
-          })
-        );
-      });
-  });
-});
-// // Trello 10 Question tests - Sad paths
-describe("POST /api/articles/:article_id/comments - Error Handling", () => {
-  test("400: Responds with 'Bad Request' error message when path is invalid", () => {
-    const newComment = {
-      username: "butter_bridge",
-      body: "a_test_comment",
-    };
-    return request(app)
-      .post("/api/articles/notanid/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request");
-      });
-  });
-  test("400: Responds with 'Bad Request: Please enter a username' error message when the comment contains no body", () => {
-    const newComment = {
-      username: "",
-      body: "this_is_a_comment",
-    };
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request: Please enter a username");
-      });
-  });
-  test("400: Responds with 'Bad Request: Please enter a valid comment' error message when the comment contains no body", () => {
-    const newComment = {
-      username: "butter_bridge",
-      body: "",
-    };
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request: Please enter a valid comment");
-      });
-  });
-  test("400: Responds with 'Bad request: Please enter a valid data type' error message when the comment body contains an incorrect date type", () => {
-    const newComment = {
-      username: "butter_bridge",
-      body: 2,
-    };
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request: Please enter a valid data type");
-      });
-  });
-  test("401 - should return an error message if the username does not exist in the users database", () => {
-    const newComment = {
-      username: "not_a_username",
-      body: "a_test_comment",
-    };
-    return request(app)
-      .post("/api/articles/2/comments")
-      .send(newComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request: Username does not exist");
-      });
-  });
+test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query", () => {
+  return request(app)
+    .get("/api/articles?sort_by=comment_count&order=notanorder")
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toEqual("Invalid Request: Please enter a valid order query");
+    });
 });
 // Trello 12 Question tests - happy paths
 describe("DELETE  /api/comments/:comment_id", () => {
