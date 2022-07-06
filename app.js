@@ -27,6 +27,7 @@ const {
 } = require("./controllers/comment_controllers.js");
 const {
   getCommentsByArticleId,
+  deleteCommentByCommentId,
 } = require("./controllers/comment_controllers.js");
 
 // Trello 3
@@ -43,6 +44,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 // Trello 10
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+// Trello 12
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 // Error Handling
 app.use("*", handleInvalidPaths);

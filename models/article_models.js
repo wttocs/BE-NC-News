@@ -55,7 +55,7 @@ exports.updateArticleById = (body, params) => {
 };
 
 // Trello 8
-exports.fetchAllArticles = (sort_by = "created_at", order = "desc") => {
+exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
   const validSortBy = [
     "article_id",
     "title",
@@ -67,6 +67,7 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc") => {
     "comment_count",
   ];
   const validOrder = ["desc", "asc"];
+  const queryValues = [];
 
   let queryString = `
   SELECT 
@@ -79,8 +80,13 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc") => {
   COUNT(comment_id)::int AS comment_count
   FROM articles
   LEFT JOIN comments
-  USING (article_id) GROUP BY articles.article_id`;
+  USING (article_id)`;
 
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+  queryString += `GROUP BY articles.article_id`;
   if (!validSortBy.includes(sort_by)) {
     return Promise.reject({
       status: 400,
@@ -95,7 +101,13 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc") => {
   } else {
     queryString += ` ORDER BY ${sort_by} ${order.toUpperCase()}`;
   }
-  return db.query(queryString).then(({ rows: articles }) => {
+  return db.query(queryString, queryValues).then(({ rows: articles }) => {
+    if (!articles[0]) {
+      return Promise.reject({
+        status: 400,
+        msg: "Bad Request: This topic does not exist",
+      });
+    }
     return articles;
   });
 };

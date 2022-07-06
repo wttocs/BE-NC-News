@@ -410,3 +410,33 @@ describe("POST /api/articles/:article_id/comments - Error Handling", () => {
       });
   });
 });
+// Trello 12 Question tests - happy paths
+describe("DELETE  /api/comments/:comment_id", () => {
+  test("204: Deletes the comment ", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+});
+// Trello 12 Question tests - sad paths
+describe("DELETE  /api/comments/:comment_id", () => {
+  test("400: Responds with 'Bad Request' error message when delete path is invalid", () => {
+    return request(app)
+      .delete("/api/comments/notacommenid")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("404: Responds with 'Bad Request: No comment to delete' error message when delete path is invalid", () => {
+    return request(app)
+      .delete("/api/comments/200")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: No comment to delete");
+      });
+  });
+});
