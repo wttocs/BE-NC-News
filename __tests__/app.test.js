@@ -271,7 +271,7 @@ describe("GET /api/articles/ - Error Handling", () => {
 });
 
 // Trello 10 Question tests - happy paths
-describe("GET /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("201: Creates a new comment and responds with the inserted comment", () => {
     const comment = { username: "butter_bridge", body: "a_test_comment" };
     return request(app)
@@ -292,7 +292,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 // // Trello 10 Question tests - Sad paths
-describe("GET /api/articles/:article_id/comments - Error Handling", () => {
+describe("POST /api/articles/:article_id/comments - Error Handling", () => {
   test("400: Responds with 'Bad Request' error message when path is invalid", () => {
     const newComment = {
       username: "butter_bridge",
