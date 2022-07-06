@@ -6,8 +6,8 @@ const {
 
 // Trello 4
 exports.getArticleByID = (req, res, next) => {
-  const params = req.params;
-  fetchArticleById(params)
+  const { article_id } = req.params;
+  fetchArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })

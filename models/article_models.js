@@ -2,9 +2,7 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 // Trello 4
-exports.fetchArticleById = (params) => {
-  const { article_id } = params;
-  const queryValues = [];
+exports.fetchArticleById = (article_id) => {
   let queryString = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
     FROM articles 
     LEFT JOIN comments USING (article_id) WHERE articles.article_id = $1 GROUP BY articles.article_id`;
@@ -21,12 +19,6 @@ exports.fetchArticleById = (params) => {
 exports.updateArticleById = (body, params) => {
   const { inc_votes } = body;
   const { article_id } = params;
-  if (!inc_votes || isNaN(inc_votes)) {
-    return Promise.reject({
-      status: 400,
-      msg: "Invalid Request",
-    });
-  }
 
   if (!inc_votes) {
     return Promise.reject({

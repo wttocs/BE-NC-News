@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 // Trello 3 Question tests - Happy paths
-describe.only("GET /api/topics", () => {
+describe("GET /api/topics", () => {
   test("200: Responds with an array of topic objects with each having the slug and description properties", () => {
     return request(app)
       .get("/api/topics")
@@ -33,12 +33,12 @@ describe.only("GET /api/topics", () => {
 });
 // Trello 3 Question tests - Sad paths
 describe("GET /api/topics - Error Handling", () => {
-  test("404: Responds with a error message of 'Not Found' for an invalid get request path", () => {
+  test("404: Responds with a error message of 'Path Not Found' for an invalid get request path", () => {
     return request(app)
       .get("/api/notatopic")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toEqual("Not Found");
+        expect(msg).toEqual("Path Not Found");
       });
   });
 });
@@ -152,6 +152,58 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       });
   });
 });
+// Trello 6 Question tests - Happy path
+describe("GET /api/users", () => {
+  test("200: Responds with an array of users objects with each having the username, name and avatar_url properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+// Trello 6 Question tests - Sad path
+describe("GET /api/topics - Error Handling", () => {
+  test("404: Responds with a error message of 'Path Not Found' for an invalid  request path", () => {
+    return request(app)
+      .get("/api/userpath")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Path Not Found");
+      });
+  });
+});
+// Trello 7 Question tests - Happy path
+describe("GET /api/articles/:articleid (comment_count)", () => {
+  test("200: Responds with an objects array containing author(which is username from the users table),title, article_id, body, topic, created_at, votes and comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            comment_count: 11,
+          })
+        );
+      });
+  });
+});
 // Trello 8 Question tests - Happy paths
 describe("GET /api/articles/", () => {
   test("200: Responds with an articles object sorted by the creation date in descending order by default", () => {
@@ -196,7 +248,7 @@ describe("GET /api/articles/", () => {
 });
 // Trello 8 Question tests - Sad paths
 describe("GET /api/articles/ - Error Handling", () => {
-  test("400: Responds with Invalid Request: Please enter a valid sort by or order error message for an invalid sort by query - PostgreSQL Error Handler", () => {
+  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
     return request(app)
       .get("/api/articles?sort_by=notaquery")
       .expect(400)
@@ -206,7 +258,7 @@ describe("GET /api/articles/ - Error Handling", () => {
         );
       });
   });
-  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query - PostgreSQL Error Handler", () => {
+  test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid order query", () => {
     return request(app)
       .get("/api/articles?sort_by=votes&order=notanorder")
       .expect(400)
@@ -214,6 +266,57 @@ describe("GET /api/articles/ - Error Handling", () => {
         expect(msg).toEqual(
           "Invalid Request: Please enter a valid order query"
         );
+      });
+  });
+});
+// Trello 9 - Happy Path
+describe("GET /api/articles/:articleid/comments", () => {
+  test("200: Responds with an array of comment objects for the input article id each having the comment_id, votes, created_at, author, body, article_id properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(Array.isArray(comments));
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("200: Responds with an empty array when an article id exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toEqual([]);
+      });
+  });
+});
+// Trello 9 - Sad Paths
+describe("GET /api/articles/:articleid/comments - Error Handling", () => {
+  test("404, responds with 'Not Found' error message when path is invalid", () => {
+    return request(app)
+      .get("/api/articles/2/notcomments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path Not Found");
+      });
+  });
+  test("404: Responds with 'Article ID Not Found' error message when article id does not exist", () => {
+    return request(app)
+      .get("/api/articles/1000/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article ID Not Found");
       });
   });
 });
