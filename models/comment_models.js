@@ -94,7 +94,7 @@ exports.removeCommentByCommentId = (comment_id) => {
     .then(({ rows: commentToDelete }) => {
       if (!commentToDelete[0]) {
         return Promise.reject({
-          status: 400,
+          status: 404,
           msg: "Bad Request: No comment to delete",
         });
       }

@@ -431,10 +431,10 @@ describe("DELETE  /api/comments/:comment_id", () => {
         expect(msg).toBe("Bad Request");
       });
   });
-  test("400: Responds with 'Bad Request' error message when delete path is invalid", () => {
+  test("404: Responds with 'Bad Request: No comment to delete' error message when delete path is invalid", () => {
     return request(app)
       .delete("/api/comments/200")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request: No comment to delete");
       });
