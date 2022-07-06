@@ -20,7 +20,11 @@ const {
   getAllArticles,
 } = require("./controllers/article_controllers.js");
 
-const { getAllUsers } = require("./controllers/user_controller");
+const { getAllUsers } = require("./controllers/user_controller.js");
+
+const {
+  postCommentByArticleId,
+} = require("./controllers/comment_controllers.js");
 
 // Trello 3
 app.get("/api/topics", getAllTopics);
@@ -33,7 +37,8 @@ app.get("/api/users", getAllUsers);
 // Trello 8
 app.get("/api/articles", getAllArticles);
 
-
+// Trello 10
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 // Error Handling
 app.use("*", handleInvalidPaths);
