@@ -41,4 +41,3 @@ exports.postCommentByArticleId = (req, res, next) => {
       next(err);
     });
 };
-

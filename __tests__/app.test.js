@@ -321,10 +321,6 @@ describe("GET /api/articles/:articleid/comments - Error Handling", () => {
   });
 });
 
-
-
-
-
 // Trello 10 Question tests - happy paths
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: Creates a new comment and responds with the inserted comment", () => {
@@ -411,5 +407,6 @@ describe("POST /api/articles/:article_id/comments - Error Handling", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request: Username does not exist");
-
-
+      });
+  });
+});
