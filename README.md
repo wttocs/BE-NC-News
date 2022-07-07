@@ -1,15 +1,33 @@
 # Northcoders News API
 
-## Initial Instructions
-
-CLONE THE REPO
+## Link to hosted version
 
 ```
-git clone
+https://s-be-nc-news.herokuapp.com/api
+```
+
+## Initial instructions
+
+On GitHub.com, navigate to the main page of the repository
+
+Fork the repo
+
+Above the file, copy the URL for the repository
+
+Open Terminal
+
+Change the current working directory to the location where you want the cloned directory
+
+Type git clone, and then paste the URL you copied earlier.
+
+```
 cd <my folder>
+git clone <copies url here>
 ```
 
 INSTALL DEPENDENCIES
+
+This will download dependencies from package.JSON
 
 ```
 npm install
@@ -42,7 +60,7 @@ The package.json file contains the below script
 
 ```
 
-You can run this script by using:
+You can run this script by entering the following command which will initialise and seed the database
 
 ```
 
@@ -59,7 +77,7 @@ The package.json file contains the below script
  "view-dev-db": "psql -f ./view-dev-db.sql > dev-db.txt"
 ```
 
-You can run this script by using:
+You can run this script by entering the following command:
 
 ```
 
@@ -67,15 +85,21 @@ npm run view-dev-db
 
 ```
 
-The output of your PSQL query will be within the file
+The output of your PSQL query will be within the file:
 
 ```
 dev-db.txt
 ```
 
+You can enable the testing suite by entering the following command:
+
+```
+npm run test
+```
+
 ## Dependencies
 
-Below are the list of dependencies:
+Below are the list of dependencies installed from the package.JSON:
 
 ```
 postgres
@@ -87,4 +111,12 @@ jest-sorted
 pg-format
 supertest
 dotenv
+```
+
+## Minimum versions
+
+```
+Node: v17.7.2
+NPM: 8.9.0
+Postgres: v14.2
 ```
