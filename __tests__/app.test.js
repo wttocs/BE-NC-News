@@ -3,6 +3,8 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const apiEndpoints = require("../endpoints.json");
+
 require("jest-sorted");
 
 beforeEach(() => {
@@ -544,6 +546,7 @@ describe("/api", () => {
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toBeInstanceOf(Object);
         expect(Object.keys(endpoints)).toHaveLength(9);
+        expect(endpoints).toEqual(apiEndpoints);
         expect(endpoints["GET /api"].description).toBe(
           "Serves up a json representation of all the available endpoints of the api"
         );
