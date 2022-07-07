@@ -30,6 +30,8 @@ const {
   deleteCommentByCommentId,
 } = require("./controllers/comment_controllers.js");
 
+const { getApiEndpoints } = require("./controllers/api_controllers.js");
+
 // Trello 3
 app.get("/api/topics", getAllTopics);
 // Trello 4
@@ -46,6 +48,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 // Trello 12
 app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
+// Trello 13
+app.get("/api", getApiEndpoints);
 
 // Error Handling
 app.use("*", handleInvalidPaths);
