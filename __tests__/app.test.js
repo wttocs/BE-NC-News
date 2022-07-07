@@ -3,7 +3,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
-
 require("jest-sorted");
 
 beforeEach(() => {
@@ -542,25 +541,23 @@ describe("/api", () => {
     return request(app)
       .get("/api")
       .expect(200)
-      .then(({ body: { apiEndpoints } }) => {
-        expect(apiEndpoints).toBeInstanceOf(Object);
-        expect(Object.keys(apiEndpoints)).toHaveLength(9);
-        expect(apiEndpoints["GET /api"].description).toBe(
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toBeInstanceOf(Object);
+        expect(Object.keys(endpoints)).toHaveLength(9);
+        expect(endpoints["GET /api"].description).toBe(
           "Serves up a json representation of all the available endpoints of the api"
         );
-        expect(apiEndpoints["GET /api/topics"].queries).toEqual([]);
-        expect(apiEndpoints["GET /api/articles"].queries).toEqual([
+        expect(endpoints["GET /api/topics"].queries).toEqual([]);
+        expect(endpoints["GET /api/articles"].queries).toEqual([
           "topic",
           "sort_by",
           "order",
         ]);
-        expect(
-          apiEndpoints["DELETE /api/comments/:comment_id"].description
-        ).toBe(
+        expect(endpoints["DELETE /api/comments/:comment_id"].description).toBe(
           "Deletes a comment for a specified comment id and serves no content with 204 status status code"
         );
         expect(
-          apiEndpoints["DELETE /api/comments/:comment_id"].exampleResponse
+          endpoints["DELETE /api/comments/:comment_id"].exampleResponse
         ).toEqual({});
       });
   });
