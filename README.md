@@ -22,7 +22,7 @@ Type git clone, and then paste the URL you copied earlier.
 
 ```
 cd <my folder>
-git clone <copies url here>
+git clone <copied url here>
 ```
 
 INSTALL DEPENDENCIES
