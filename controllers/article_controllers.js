@@ -17,9 +17,9 @@ exports.getArticleByID = (req, res, next) => {
 };
 // Trello 5
 exports.patchArticleById = (req, res, next) => {
-  const body = req.body;
-  const params = req.params;
-  updateArticleById(body, params)
+  const { inc_votes } = req.body;
+  const { article_id } = req.params;
+  updateArticleById(inc_votes, article_id)
     .then((updated_article) => {
       res.status(200).send({ updated_article });
     })

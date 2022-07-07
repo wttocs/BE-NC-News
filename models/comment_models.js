@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const format = require("pg-format");
 const { fetchAllUsers } = require("./user_models");
 
 // Trello 9

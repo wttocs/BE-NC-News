@@ -219,6 +219,7 @@ describe("GET /api/articles/", () => {
               title: expect.any(String),
               topic: expect.any(String),
               author: expect.any(String),
+              body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
               comment_count: expect.any(Number),
@@ -231,7 +232,7 @@ describe("GET /api/articles/", () => {
   describe("GET /api/articles/ - Error Handling", () => {
     test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
       return request(app)
-        .get("/api/articles?sort_by=notaquery")
+        .get("/api/articles?topic=mitch&sort_by=notaquery")
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toEqual(
@@ -309,6 +310,7 @@ describe("GET /api/articles/", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .send(comment)
+        .expect(201)
         .then(({ body: { postedComment } }) => {
           expect(postedComment).toEqual(
             expect.objectContaining({

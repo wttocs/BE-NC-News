@@ -1,8 +1,7 @@
 const db = require("../db/connection");
-const format = require("pg-format");
+const { fetchAllTopics } = require("../models/topic_models");
 
 // Trello 4
-
 exports.fetchArticleById = (article_id) => {
   let queryString = `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count 
     FROM articles 
@@ -16,10 +15,7 @@ exports.fetchArticleById = (article_id) => {
   });
 };
 // Trello 5
-exports.updateArticleById = (body, params) => {
-  const { inc_votes } = body;
-  const { article_id } = params;
-
+exports.updateArticleById = (inc_votes, article_id) => {
   if (!inc_votes) {
     return Promise.reject({
       status: 400,
@@ -32,7 +28,7 @@ exports.updateArticleById = (body, params) => {
       msg: "Invalid Request: Please enter a number",
     });
   }
-  if (Object.keys(body).length > 1) {
+  if (Object.keys(inc_votes).length > 1) {
     return Promise.reject({
       status: 400,
       msg: "Invalid Request: Please only enter one input",
@@ -75,6 +71,7 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
     articles.title,
     articles.topic,
     articles.author,
+    articles.body,
     articles.created_at,
     articles.votes,
   COUNT(comment_id)::int AS comment_count
@@ -82,11 +79,6 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
   LEFT JOIN comments
   USING (article_id)`;
 
-  if (topic) {
-    queryString += ` WHERE topic = $1`;
-    queryValues.push(topic);
-  }
-  queryString += `GROUP BY articles.article_id`;
   if (!validSortBy.includes(sort_by)) {
     return Promise.reject({
       status: 400,
@@ -98,16 +90,30 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
       status: 400,
       msg: "Invalid Request: Please enter a valid order query",
     });
-  } else {
-    queryString += ` ORDER BY ${sort_by} ${order.toUpperCase()}`;
   }
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+
+  queryString += `GROUP BY articles.article_id `;
+  queryString += ` ORDER BY ${sort_by} ${order.toUpperCase()}`;
+
   return db.query(queryString, queryValues).then(({ rows: articles }) => {
     if (!articles[0]) {
-      return Promise.reject({
-        status: 400,
-        msg: "Bad Request: This topic does not exist",
+      return fetchAllTopics().then((topic) => {
+        const allTopics = topic.map((topic) => {
+          return topic.slug;
+        });
+        if (!allTopics.includes(topic)) {
+          return Promise.reject({
+            status: 400,
+            msg: "Bad Request: This topic does not exist",
+          });
+        }
       });
+    } else {
+      return articles;
     }
-    return articles;
   });
 };

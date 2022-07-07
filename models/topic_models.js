@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const format = require("pg-format");
 
 // Trello 3
 exports.fetchAllTopics = () => {
