@@ -1,4 +1,3 @@
-const app = require("../app");
 // Invalid Paths
 exports.handleInvalidPaths = (req, res) => {
   res.status(404).send({ msg: "Path Not Found" });
