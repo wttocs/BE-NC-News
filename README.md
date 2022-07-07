@@ -27,7 +27,7 @@ git clone <copied url here>
 
 INSTALL DEPENDENCIES
 
-This will download dependencies from package.JSON
+You can download dependencies from package.JSON by entering the following command:
 
 ```
 npm install
@@ -51,13 +51,13 @@ PGDATABASE=nc_news
 
 SEED THE LOCAL DATABASE
 
-The package.json file contains the below script
+The package.json file contains the following script:
 
 ```
 "seed": "node ./db/seeds/run-seed.js"
 ```
 
-You can run this script by entering the following command which will initialise and seed the database
+You can run this script by entering the following command which will initialise and seed the database:
 
 ```
 npm run setup-dbs
