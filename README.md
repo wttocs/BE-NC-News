@@ -46,7 +46,6 @@ DOTENV: CREATE 2 NEW FILES
 .env.development - In the body of this file add:
 
 ```
-
 PGDATABASE=nc_news
 ```
 
@@ -55,23 +54,19 @@ SEED THE LOCAL DATABASE
 The package.json file contains the below script
 
 ```
-
 "seed": "node ./db/seeds/run-seed.js"
-
 ```
 
 You can run this script by entering the following command which will initialise and seed the database
 
 ```
-
 npm run setup-dbs
 npm run seed
-
 ```
 
 VIEW DEV DATABASE
 
-The package.json file contains the below script
+The package.json file contains the following script:
 
 ```
  "view-dev-db": "psql -f ./view-dev-db.sql > dev-db.txt"
@@ -80,9 +75,7 @@ The package.json file contains the below script
 You can run this script by entering the following command:
 
 ```
-
 npm run view-dev-db
-
 ```
 
 The output of your PSQL query will be within the file:
