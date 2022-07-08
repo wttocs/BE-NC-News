@@ -11,45 +11,22 @@ const {
   handleInternalServerErrors,
 } = require("./controllers/error_controllers.js");
 
-// Topic Controllers
-const { getAllTopics } = require("./controllers/topic_controllers.js");
-// Article Controllers
-const {
-  getArticleByID,
-  patchArticleById,
-  getAllArticles,
-} = require("./controllers/article_controllers.js");
+const apiRouter = require("./routes/api_router.js");
+const topicsRouter = require("./routes/topic_router.js");
+const articlesRouter = require("./routes/article_router.js");
+const usersRouter = require("./routes/user_routers.js");
+const commentsRouter = require("./routes/comment_router.js");
 
-const { getAllUsers } = require("./controllers/user_controller.js");
-
-const {
-  postCommentByArticleId,
-} = require("./controllers/comment_controllers.js");
-const {
-  getCommentsByArticleId,
-  deleteCommentByCommentId,
-} = require("./controllers/comment_controllers.js");
-
-const { getApiEndpoints } = require("./controllers/api_controllers.js");
-
-// Trello 3
-app.get("/api/topics", getAllTopics);
-// Trello 4
-app.get("/api/articles/:article_id", getArticleByID);
-// Trello 5
-app.patch("/api/articles/:article_id", patchArticleById);
-// Trello 6
-app.get("/api/users", getAllUsers);
-// Trello 8
-app.get("/api/articles", getAllArticles);
-// Trello 9
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-// Trello 10
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-// Trello 12
-app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
-// Trello 13
-app.get("/api", getApiEndpoints);
+// Endpoints Router
+app.use("/api", apiRouter);
+// Topics
+app.use("/api/topics", topicsRouter);
+// Articles
+app.use("/api/articles", articlesRouter);
+// Users
+app.use("/api/users", usersRouter);
+// Comments
+app.use("/api/comments", commentsRouter);
 
 // Error Handling
 app.use("*", handleInvalidPaths);

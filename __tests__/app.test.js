@@ -4,7 +4,6 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const apiEndpoints = require("../endpoints.json");
-
 require("jest-sorted");
 
 beforeEach(() => {
@@ -522,7 +521,7 @@ describe("DELETE  /api/comments/:comment_id", () => {
 describe("DELETE  /api/comments/:comment_id", () => {
   test("400: Responds with 'Bad Request' error message when delete path is invalid", () => {
     return request(app)
-      .delete("/api/comments/notacommenid")
+      .delete("/api/comments/notacommentid")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request");
