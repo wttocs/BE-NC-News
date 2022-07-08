@@ -5,6 +5,7 @@ const {
   fetchCommentsByArticleId,
   insertCommentByArticleId,
   insertArticle,
+  removeArticleByID,
 } = require("../models/article_models.js");
 
 // Trello 4
@@ -78,5 +79,18 @@ exports.postArticle = (req, res, next) => {
     .then((new_article) => {
       return res.status(201).send({ new_article });
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      next(err);
+    });
+};
+// Trello 23
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticleByID(article_id)
+    .then((deletedArticle) => {
+      res.status(204).send({ deletedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

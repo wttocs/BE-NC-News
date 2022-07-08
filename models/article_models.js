@@ -238,3 +238,22 @@ exports.insertArticle = (author, title, body, topic) => {
     }
   });
 };
+// Trello 23
+exports.removeArticleByID = (article_id) => {
+  const queryString = `
+    DELETE FROM articles
+    WHERE article_id = $1
+    RETURNING *
+  `;
+  return db
+    .query(queryString, [article_id])
+    .then(({ rows: deletedComment }) => {
+      if (!deletedComment[0]) {
+        return Promise.reject({
+          status: 404,
+          msg: "Bad Request: No article to delete",
+        });
+      }
+      return deletedComment;
+    });
+};

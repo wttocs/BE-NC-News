@@ -9,14 +9,14 @@ exports.removeCommentByCommentId = (comment_id) => {
   `;
   return db
     .query(queryString, [comment_id])
-    .then(({ rows: commentToDelete }) => {
-      if (!commentToDelete[0]) {
+    .then(({ rows: deletedComment }) => {
+      if (!deletedComment[0]) {
         return Promise.reject({
           status: 404,
           msg: "Bad Request: No comment to delete",
         });
       }
-      return commentToDelete;
+      return deletedComment;
     });
 };
 

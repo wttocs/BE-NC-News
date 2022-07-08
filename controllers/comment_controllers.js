@@ -7,8 +7,8 @@ const {
 exports.deleteCommentByCommentId = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentByCommentId(comment_id)
-    .then((commentToDelete) => {
-      res.status(204).send({ commentToDelete });
+    .then((deletedComment) => {
+      res.status(204).send({ deletedComment });
     })
     .catch((err) => {
       next(err);

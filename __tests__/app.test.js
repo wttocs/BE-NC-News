@@ -14,7 +14,7 @@ afterAll(() => {
   return db.end();
 });
 
-// Trello 3 Question tests - Happy paths
+// Trello 3 - Happy paths
 describe("GET /api/topics", () => {
   test("200: Responds with an array of topic objects with each having the slug and description properties", () => {
     return request(app)
@@ -32,7 +32,7 @@ describe("GET /api/topics", () => {
       });
   });
 });
-// Trello 3 Question tests - Sad paths
+// Trello 3 - Sad paths
 describe("GET /api/topics - Error Handling", () => {
   test("404: Responds with a error message of 'Path Not Found' for an invalid get request path", () => {
     return request(app)
@@ -43,7 +43,7 @@ describe("GET /api/topics - Error Handling", () => {
       });
   });
 });
-// Trello 4 Question tests - Happy paths
+// Trello 4 - Happy paths
 describe("GET /api/articles/:articleid", () => {
   test("200: Responds with an objects array containing author(which is username from the users table),title, article_id, body, topic, created_at and votes", () => {
     return request(app)
@@ -64,7 +64,7 @@ describe("GET /api/articles/:articleid", () => {
       });
   });
 });
-// Trello 4 Question tests - Sad path
+// Trello 4 - Sad path
 describe("GET /api/articles/:articleid - Error Handling", () => {
   test("400: Responds with 'Bad request' error message for an invalid get request path", () => {
     return request(app)
@@ -83,7 +83,7 @@ describe("GET /api/articles/:articleid - Error Handling", () => {
       });
   });
 });
-// Trello 5 Question tests - Happy paths
+// Trello 5 - Happy paths
 describe("PATCH /api/articles/:article_id", () => {
   test("200: Responds with an articles object with the votes updated correctly", () => {
     return request(app)
@@ -105,7 +105,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-// Trello 5 Question tests - Sad paths
+// Trello 5  - Sad paths
 describe("PATCH /api/articles/:article_id - Error Handling", () => {
   test("404: Responds with 'Article ID Not Found' error message for an invalid id that does not exist", () => {
     return request(app)
@@ -153,7 +153,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
       });
   });
 });
-// Trello 6 Question tests - Happy path
+// Trello 6 - Happy path
 describe("GET /api/users", () => {
   test("200: Responds with an array of users objects with each having the username, name and avatar_url properties", () => {
     return request(app)
@@ -172,7 +172,7 @@ describe("GET /api/users", () => {
       });
   });
 });
-// Trello 6 Question tests - Sad path
+// Trello 6 - Sad path
 describe("GET /api/topics - Error Handling", () => {
   test("404: Responds with a error message of 'Path Not Found' for an invalid  request path", () => {
     return request(app)
@@ -183,7 +183,7 @@ describe("GET /api/topics - Error Handling", () => {
       });
   });
 });
-// Trello 7 Question tests - Happy path
+// Trello 7 - Happy path
 describe("GET /api/articles/:articleid (comment_count)", () => {
   test("200: Responds with an objects array containing author(which is username from the users table),title, article_id, body, topic, created_at, votes and comment count", () => {
     return request(app)
@@ -205,7 +205,7 @@ describe("GET /api/articles/:articleid (comment_count)", () => {
       });
   });
 });
-// Trello 8 Question tests - Happy paths
+// Trello 8 - Happy paths
 describe("GET /api/articles/", () => {
   test("200: Responds with an articles object sorted by the creation date in descending order by default", () => {
     return request(app)
@@ -229,7 +229,7 @@ describe("GET /api/articles/", () => {
         });
       });
   });
-  // Trello 8 Question tests - Sad paths
+  // Trello 8 - Sad paths
   describe("GET /api/articles/ - Error Handling", () => {
     test("400: Responds with 'Invalid Request: Please enter a valid sort by or order' error message for an invalid sort by query", () => {
       return request(app)
@@ -304,7 +304,7 @@ describe("GET /api/articles/", () => {
     });
   });
 
-  // Trello 10 Question tests - happy paths
+  // Trello 10  - Happy paths
   describe("POST /api/articles/:article_id/comments", () => {
     test("201: Creates a new comment and responds with the inserted comment", () => {
       const comment = { username: "butter_bridge", body: "a_test_comment" };
@@ -326,7 +326,7 @@ describe("GET /api/articles/", () => {
         });
     });
   });
-  // // Trello 10 Question tests - Sad paths
+  // // Trello 10 - Sad paths
   describe("POST /api/articles/:article_id/comments - Error Handling", () => {
     test("400: Responds with 'Bad Request' error message when path is invalid", () => {
       const newComment = {
@@ -394,7 +394,7 @@ describe("GET /api/articles/", () => {
         });
     });
   });
-  // Trello 11 Question tests - happy path
+  // Trello 11 - Happy path
   describe("GET /GET /api/articles (queries)", () => {
     test("200: Responds with an articles object sorted by title in descending order", () => {
       return request(app)
@@ -476,7 +476,7 @@ describe("GET /api/articles/", () => {
         });
     });
   });
-  // // Trello 11 Question tests - Sad paths
+  // // Trello 11 - Sad paths
   describe("GET /api/articles (queries) - Error Handling", () => {
     test("400: Responds with 'Bad Request: This topic does not exist' error message when queried topic does not exist", () => {
       return request(app)
@@ -506,7 +506,7 @@ test("400: Responds with 'Invalid Request: Please enter a valid sort by or order
       expect(msg).toEqual("Invalid Request: Please enter a valid order query");
     });
 });
-// Trello 12 Question tests - happy paths
+// Trello 12  - Happy paths
 describe("DELETE  /api/comments/:comment_id", () => {
   test("204: Deletes the comment ", () => {
     return request(app)
@@ -517,7 +517,7 @@ describe("DELETE  /api/comments/:comment_id", () => {
       });
   });
 });
-// Trello 12 Question tests - sad paths
+// Trello 12 - Sad paths
 describe("DELETE  /api/comments/:comment_id", () => {
   test("400: Responds with 'Bad Request' error message when delete path is invalid", () => {
     return request(app)
@@ -580,7 +580,7 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
-// Trello 17 Question tests - sad paths
+// Trello 17 - sad paths
 describe("GET /api/users/:username", () => {
   test("404: Responds with 'Bad Request: User does not exist' error message when username is valid type that does not exist", () => {
     return request(app)
@@ -838,4 +838,35 @@ test("400: Responds with 'Bad request: Please enter a valid data type' error mes
     .then(({ body: { msg } }) => {
       expect(msg).toBe("Bad Request: Please enter a valid data type");
     });
+});
+// // Trello 23 - Happy path
+describe("DELETE  /api/articles/:article_id", () => {
+  test("204: Deletes the comment ", () => {
+    return request(app)
+      .delete("/api/articles/2")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+});
+
+// Trello 23 - Sad path
+describe("DELETE  /api/articles/:article_id", () => {
+  test("400: Responds with 'Bad Request' error message when delete path is invalid", () => {
+    return request(app)
+      .delete("/api/articles/notanarticleid")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("404: Responds with 'Bad Request: No article to delete' error message when no article to delete", () => {
+    return request(app)
+      .delete("/api/articles/200")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: No article to delete");
+      });
+  });
 });
