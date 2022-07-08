@@ -90,8 +90,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send({ inc_votes: 100 })
       .expect(200)
-      .then(({ body: { updated_article } }) => {
-        expect(updated_article).toEqual(
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle).toEqual(
           expect.objectContaining({
             article_id: 1,
             title: "Living in the shadow of a great man",
@@ -601,15 +601,15 @@ describe("GET /api/users/:username", () => {
     });
   });
 });
-// Trello 18 Question tests - Happy paths
+// Trello 18 - Happy paths
 describe("PATCH /api/comments/:comment_id", () => {
   test("200: Responds with an comments object with the positive votes updated correctly", () => {
     return request(app)
       .patch("/api/comments/1")
       .send({ inc_votes: 100 })
       .expect(200)
-      .then(({ body: { updated_comment } }) => {
-        expect(updated_comment).toEqual(
+      .then(({ body: { updatedComment } }) => {
+        expect(updatedComment).toEqual(
           expect.objectContaining({
             comment_id: 1,
             body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -627,8 +627,8 @@ describe("PATCH /api/comments/:comment_id", () => {
         .patch("/api/comments/1")
         .send({ inc_votes: -100 })
         .expect(200)
-        .then(({ body: { updated_comment } }) => {
-          expect(updated_comment).toEqual(
+        .then(({ body: { updatedComment } }) => {
+          expect(updatedComment).toEqual(
             expect.objectContaining({
               comment_id: 1,
               body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -642,7 +642,7 @@ describe("PATCH /api/comments/:comment_id", () => {
     });
   });
 });
-// Trello 18 Question tests - Sad paths
+// Trello 18 - Sad paths
 describe("PATCH /api/comments/:article_id - Error Handling", () => {
   test("404: Responds with 'Comment ID Not Found' error message for an invalid id that does not exist", () => {
     return request(app)
@@ -690,9 +690,9 @@ describe("PATCH /api/comments/:article_id - Error Handling", () => {
       });
   });
 });
-// Trello 19
+// Trello 19 - Happy path
 describe("POST /api/articles/", () => {
-  test("201: Responds with new posted article", () => {
+  test("201: Responds with new article", () => {
     const newArticle = {
       author: "butter_bridge",
       title: "a_new_article",
@@ -703,8 +703,8 @@ describe("POST /api/articles/", () => {
       .post("/api/articles")
       .send(newArticle)
       .expect(201)
-      .then(({ body: { article } }) => {
-        expect(article).toEqual({
+      .then(({ body: { new_article } }) => {
+        expect(new_article).toEqual({
           article_id: expect.any(Number),
           author: "butter_bridge",
           title: "a_new_article",
@@ -718,7 +718,7 @@ describe("POST /api/articles/", () => {
   });
 });
 
-// Trello 18 Question tests - Sad paths
+// Trello 18 - Sad paths
 describe("POST /api/articles/ - Error Handling", () => {
   test("400: Responds with 'Bad Request' error message when path is invalid", () => {
     const newArticle = {
@@ -779,4 +779,63 @@ describe("POST /api/articles/ - Error Handling", () => {
         expect(msg).toBe("Bad Request: Username does not exist");
       });
   });
+});
+// Trello 22 - Happy Path
+describe("POST /api/topics", () => {
+  test("201: Responds with new topic", () => {
+    const newTopic = {
+      slug: "topic name here",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { newTopic } }) => {
+        expect(newTopic).toBeInstanceOf(Object);
+        expect(newTopic).toMatchObject({
+          slug: "topic name here",
+          description: "description here",
+        });
+      });
+  });
+});
+// Trello 22 - Sad Path
+test("400: Responds with 'Bad Request' error message when path is invalid", () => {
+  const newTopic = {
+    slug: "topic name here",
+    description: "description here",
+  };
+  return request(app)
+    .post("/api/the_topics")
+    .send(newTopic)
+    .expect(404)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("Path Not Found");
+    });
+});
+test("400: Responds with 'Bad Request: Please enter valid topic contents' error message when the topic contains no description", () => {
+  const newTopic = {
+    slug: "topic name here",
+  };
+  return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("Bad Request: Please enter valid topic contents");
+    });
+});
+test("400: Responds with 'Bad request: Please enter a valid data type' error message when the new article contains the wrong data type", () => {
+  const newTopic = {
+    slug: 12345,
+    description: "description here",
+  };
+  return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("Bad Request: Please enter a valid data type");
+    });
 });

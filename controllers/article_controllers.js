@@ -23,8 +23,8 @@ exports.patchArticleById = (req, res, next) => {
   const { inc_votes } = req.body;
   const { article_id } = req.params;
   updateArticleById(inc_votes, article_id)
-    .then((updated_article) => {
-      res.status(200).send({ updated_article });
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
     })
     .catch((err) => {
       next(err);
@@ -75,8 +75,8 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.postArticle = (req, res, next) => {
   const { author, title, body, topic } = req.body;
   insertArticle(author, title, body, topic)
-    .then((article) => {
-      return res.status(201).send({ article });
+    .then((new_article) => {
+      return res.status(201).send({ new_article });
     })
     .catch((err) => next(err));
 };

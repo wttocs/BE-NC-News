@@ -45,14 +45,14 @@ exports.updateCommentByCommentId = (inc_votes, comment_id) => {
     "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *";
   return db
     .query(queryString, [inc_votes, comment_id])
-    .then(({ rows: updated_comment }) => {
-      if (!updated_comment[0]) {
+    .then(({ rows: updatedComment }) => {
+      if (!updatedComment[0]) {
         return Promise.reject({
           status: 404,
           msg: "Comment ID Not Found",
         });
       } else {
-        return updated_comment[0];
+        return updatedComment[0];
       }
     });
 };
