@@ -6,7 +6,7 @@
 https://s-be-nc-news.herokuapp.com/api
 ```
 
-## Introduction
+## Summary
 
 This project is a web API serving JSON data for a news website.
 It consists of articles, comments, topics, and users information
