@@ -380,7 +380,7 @@ describe("GET /api/articles/", () => {
           expect(msg).toBe("Bad Request: Please enter a valid data type");
         });
     });
-    test("400: Responds with 'Bad Request: Username does not exist' when body comment username does not exist", () => {
+    test("404: Responds with 'Bad Request: Username does not exist' when body comment username does not exist", () => {
       const newComment = {
         username: "not_a_username",
         body: "a_test_comment",
@@ -388,7 +388,7 @@ describe("GET /api/articles/", () => {
       return request(app)
         .post("/api/articles/2/comments")
         .send(newComment)
-        .expect(400)
+        .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Bad Request: Username does not exist");
         });
@@ -562,5 +562,42 @@ describe("/api", () => {
           endpoints["DELETE /api/comments/:comment_id"].exampleResponse
         ).toEqual({});
       });
+  });
+});
+// Trello 17 - Happy path
+describe("GET /api/users/:username", () => {
+  test("200: Responds with an users object for a specified username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toEqual({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+});
+// Trello 17 Question tests - sad paths
+describe("GET /api/users/:username", () => {
+  test("404: Responds with 'Bad Request: User does not exist' error message when username is valid type that does not exist", () => {
+    return request(app)
+      .get("/api/users/not_a_username")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Username does not exist");
+      });
+  });
+  describe("GET /api/users/:username", () => {
+    test("400: Responds with 'Bad Request: Please enter a valid data type' error message when username is invalid data ty[e", () => {
+      return request(app)
+        .get("/api/users/23abc")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad Request: Please enter a valid data type");
+        });
+    });
   });
 });

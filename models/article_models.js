@@ -40,7 +40,7 @@ exports.updateArticleById = (inc_votes, article_id) => {
   return db
     .query(queryString, [inc_votes, article_id])
     .then(({ rows: updated_article }) => {
-      if (!updated_article.length) {
+      if (!updated_article[0]) {
         return Promise.reject({
           status: 404,
           msg: "Article ID Not Found",
@@ -184,7 +184,7 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     });
     if (!allUsernames.includes(username)) {
       return Promise.reject({
-        status: 400,
+        status: 404,
         msg: "Bad Request: Username does not exist",
       });
     } else {
