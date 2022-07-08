@@ -4,6 +4,7 @@ const {
   fetchAllArticles,
   fetchCommentsByArticleId,
   insertCommentByArticleId,
+  insertArticle,
 } = require("../models/article_models.js");
 
 // Trello 4
@@ -69,4 +70,13 @@ exports.postCommentByArticleId = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+// Trello 19
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic } = req.body;
+  insertArticle(author, title, body, topic)
+    .then((article) => {
+      return res.status(201).send({ article });
+    })
+    .catch((err) => next(err));
 };

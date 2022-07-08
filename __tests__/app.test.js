@@ -341,7 +341,7 @@ describe("GET /api/articles/", () => {
           expect(msg).toBe("Bad Request");
         });
     });
-    test("400: Responds with 'Bad Request: Please enter a username' error message when the comment contains no body", () => {
+    test("400: Responds with 'Bad Request: Please enter a username' error message when the comment contains no username", () => {
       const newComment = {
         username: "",
         body: "this_is_a_comment",
@@ -687,6 +687,96 @@ describe("PATCH /api/comments/:article_id - Error Handling", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Request: Please only enter one input");
+      });
+  });
+});
+// Trello 19
+describe("POST /api/articles/", () => {
+  test("201: Responds with new posted article", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "a_new_article",
+      body: "a_new_article_body",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          article_id: expect.any(Number),
+          author: "butter_bridge",
+          title: "a_new_article",
+          body: "a_new_article_body",
+          topic: "cats",
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+        });
+      });
+  });
+});
+
+// Trello 18 Question tests - Sad paths
+describe("POST /api/articles/ - Error Handling", () => {
+  test("400: Responds with 'Bad Request' error message when path is invalid", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "a_new_article",
+      body: "a_new_article_body",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/the_articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path Not Found");
+      });
+  });
+  test("400: Responds with 'Bad Request: Please enter valid article contents' error message when the article contains no body", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "a_new_article",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Please enter valid article contents");
+      });
+  });
+  test("400: Responds with 'Bad request: Please enter a valid data type' error message when the new article contains the wrong data type", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      body: "a_new_article_body",
+      title: 12345,
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Please enter a valid data type");
+      });
+  });
+  test("404: Responds with 'Bad Request: Username does not exist' when body comment username does not exist", () => {
+    const newArticle = {
+      author: "a_new_author",
+      body: "a_new_article_body",
+      title: "a_new_article",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request: Username does not exist");
       });
   });
 });

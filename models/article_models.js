@@ -196,3 +196,45 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     }
   });
 };
+// Trello 19
+exports.insertArticle = (author, title, body, topic) => {
+  if (!author || !title || !body || !topic) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter valid article contents",
+    });
+  }
+
+  if (
+    typeof author !== "string" ||
+    typeof title !== "string" ||
+    typeof body !== "string" ||
+    typeof topic !== "string"
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Please enter a valid data type",
+    });
+  }
+  const queryString = `INSERT INTO articles (author, title, body, topic) VALUES
+    ($1, $2, $3, $4) RETURNING *, 0 as comment_count`;
+
+  const queryValues = [author, title, body, topic];
+
+  return fetchAllUsers().then((users) => {
+    const allUsernames = users.map((user) => {
+      return user.username;
+    });
+    if (!allUsernames.includes(author)) {
+      return Promise.reject({
+        status: 404,
+        msg: "Bad Request: Username does not exist",
+      });
+    } else {
+      return db.query(queryString, queryValues).then(({ rows: article }) => {
+        // article[0].comment_count = 0;
+        return article[0];
+      });
+    }
+  });
+};
