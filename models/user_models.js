@@ -7,6 +7,7 @@ exports.fetchAllUsers = () => {
   });
 };
 
+// Trello 17
 exports.fetchUserByUsername = (username) => {
   const queryString = "SELECT * FROM users WHERE username = $1";
   const queryValues = [username];
@@ -31,13 +32,3 @@ exports.fetchUserByUsername = (username) => {
     });
   });
 };
-
-//  return db.query(queryString, queryValues).then(({ rows: user }) => {
-//    if (!user[0]) {
-//      return Promise.reject({
-//        status: 404,
-//        msg: "Bad Request: User does not exist",
-//      });
-//    }
-//    return user[0];
-//  });

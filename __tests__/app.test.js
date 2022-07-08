@@ -137,7 +137,7 @@ describe("PATCH /api/articles/:article_id - Error Handling", () => {
   test("400, Responds with 'Invalid Request' error message when passed an object that does  have a 'inc_votes' property with the incorrect value - PostgreSQL Error Handler", () => {
     return request(app)
       .patch("/api/articles/1")
-      .send({ inc_votes: "dog" })
+      .send({ inc_votes: "test" })
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Invalid Request: Please enter a number");
@@ -599,5 +599,94 @@ describe("GET /api/users/:username", () => {
           expect(msg).toBe("Bad Request: Please enter a valid data type");
         });
     });
+  });
+});
+// Trello 18 Question tests - Happy paths
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: Responds with an comments object with the positive votes updated correctly", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 100 })
+      .expect(200)
+      .then(({ body: { updated_comment } }) => {
+        expect(updated_comment).toEqual(
+          expect.objectContaining({
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            article_id: 9,
+            author: "butter_bridge",
+            votes: 116,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  describe("PATCH /api/comments/:comment_id", () => {
+    test("200: Responds with an comments object with the negative votes updated correctly", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -100 })
+        .expect(200)
+        .then(({ body: { updated_comment } }) => {
+          expect(updated_comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+              article_id: 9,
+              author: "butter_bridge",
+              votes: -84,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+  });
+});
+// Trello 18 Question tests - Sad paths
+describe("PATCH /api/comments/:article_id - Error Handling", () => {
+  test("404: Responds with 'Comment ID Not Found' error message for an invalid id that does not exist", () => {
+    return request(app)
+      .patch("/api/comments/500")
+      .send({ inc_votes: 100 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Comment ID Not Found");
+      });
+  });
+  test("400: Responds with 'Bad request' error message for an invalid patch request path", () => {
+    return request(app)
+      .patch("/api/comments/badpath")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does not have a 'inc_votes' property", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ not_inc_votes: 200 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request: Please enter the correct input");
+      });
+  });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does  have a 'inc_votes' property with the incorrect value - PostgreSQL Error Handler", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "test" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request: Please enter a number");
+      });
+  });
+  test("400, Responds with 'Invalid Request' error message when passed an object that does have a 'inc_votes' property but also includes an additional incorrect property", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "100", down_votes: "200" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Request: Please only enter one input");
+      });
   });
 });

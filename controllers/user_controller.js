@@ -1,9 +1,9 @@
-// Trello 6
 const {
   fetchAllUsers,
   fetchUserByUsername,
 } = require("../models/user_models.js");
 
+// Trello 6
 exports.getAllUsers = (req, res, next) => {
   fetchAllUsers()
     .then((users) => {
@@ -14,6 +14,7 @@ exports.getAllUsers = (req, res, next) => {
     });
 };
 
+// Trello 17
 exports.getUserByUserName = (req, res, next) => {
   const { username } = req.params;
 
