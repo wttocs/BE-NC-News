@@ -14,4 +14,3 @@ SELECT comment_id,
         body,
         FROM comments
         WHERE article_id = 1;
-
